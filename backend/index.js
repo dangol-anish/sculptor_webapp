@@ -5,6 +5,10 @@ import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
+import path from "path";
+
+//route imports
+import authRouter from "./routes/auth.route.js";
 
 const app = express();
 const hostPort = process.env.PORT;
@@ -22,6 +26,13 @@ mongoose
   .catch((err) => {
     console.log(err);
   });
+
+// routes
+app.use("/api/auth", authRouter);
+
+app.use((req, res, next) => {
+  res.status(404).sendFile(path.join(__dirname, "public", "404.html"));
+});
 
 app.listen(hostPort, () => {
   console.log(`Listening to port ${hostPort}!`);
