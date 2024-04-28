@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
+import axios from "axios";
 
 const SignUp = () => {
   const [passwordError, setPasswordError] = useState("");
@@ -10,27 +11,34 @@ const SignUp = () => {
     handleSubmit,
     watch,
   } = useForm();
-  const onSubmit = (data) => console.log(data);
 
-  const password = watch("password", "");
+  // form submission
+  const onSubmit = async (signUpDetails) => {
+    try {
+      const signUpResponse = await axios.post(
+        "http://localhost:3000/api/auth/signup",
+        signUpDetails
+      );
+      console.log(signUpResponse);
 
-  const handleConfirmPassword = (value) => {
-    if (value === password) {
-      setPasswordError("");
-    } else {
-      setPasswordError("Passwords do not match");
+      // console.log(data);
+    } catch (error) {
+      console.log(error);
     }
   };
+
+  const password = watch("password", "");
 
   return (
     <>
       <div className="min-h-screen bg-zinc-900 ">
         <form onSubmit={handleSubmit(onSubmit)}>
+          {/* for username */}
           <div>
             <label className="text-white">Username</label>
             <input
               type="text"
-              {...register("username", { required: true, minLength: 3 })}
+              {...register("userName", { required: true, minLength: 3 })}
             />
             {errors.username && errors.username.type === "required" && (
               <span>Username is required</span>
@@ -39,11 +47,15 @@ const SignUp = () => {
               <span>Username must be at least 3 characters</span>
             )}
           </div>
+          {/* for email */}
           <div>
             <label className="text-white">Email</label>
             <input
               type="email"
-              {...register("email", { required: true, pattern: /^\S+@\S+$/i })}
+              {...register("userEmail", {
+                required: true,
+                pattern: /^\S+@\S+$/i,
+              })}
             />
             {errors.email && errors.email.type === "required" && (
               <span>Email is required</span>
@@ -52,11 +64,13 @@ const SignUp = () => {
               <span>Invalid email format</span>
             )}
           </div>
+          {/* for password */}
           <div>
             <label className="text-white">Password</label>
             <input
               type="password"
-              {...register("password", {
+              autoComplete=""
+              {...register("userPassword", {
                 required: true,
                 pattern:
                   /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/,
@@ -73,13 +87,14 @@ const SignUp = () => {
               </span>
             )}
           </div>
+          {/* for password confirmation */}
           <div>
             <label className="text-white">Confirm Password</label>
             <input
               type="password"
-              {...register("confirmPassword", {
+              autoComplete=""
+              {...register("confirmUserPassword", {
                 required: true,
-                validate: (value) => handleConfirmPassword(value),
               })}
             />
             {errors.confirmPassword &&
@@ -88,11 +103,8 @@ const SignUp = () => {
               )}
             {passwordError && <span>{passwordError}</span>}
           </div>
-          <button
-            className="text-white"
-            type="submit"
-            disabled={passwordError || isSubmitting}
-          >
+          {/* submit button */}
+          <button className="text-white" type="submit">
             Sign Up
           </button>
         </form>
