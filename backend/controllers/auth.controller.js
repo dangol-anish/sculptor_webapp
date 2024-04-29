@@ -7,14 +7,15 @@ import jwt from "jsonwebtoken";
 import { pwdRegex } from "../utils/password.js";
 import { randomString } from "../utils/random.js";
 import { verifyEmail } from "../utils/sendEmail.js";
-import url from "url";
 
 // signup controller
 export const signup = async (req, res, next) => {
   try {
     const { userName, userEmail, userPassword, confirmUserPassword } = req.body;
+
+    console.log(userPassword, confirmUserPassword);
     //empty input validation
-    if (!userName || !userEmail || !userPassword) {
+    if (!userName || !userEmail || !userPassword || !confirmUserPassword) {
       return next(errorHandler(404, "All fields are required!"));
     }
 
@@ -34,10 +35,10 @@ export const signup = async (req, res, next) => {
       );
     }
 
-    // password and confirm password validation
-    // if (userPassword !== confirmUserPassword) {
-    //   return next(errorHandler(404, "Your passwords don't match!"));
-    // }
+    // matching password check
+    if (userPassword !== confirmUserPassword) {
+      return next(errorHandler(404, "Passwords do not match!"));
+    }
 
     const hashedPassword = bcryptjs.hashSync(userPassword, 10);
 
@@ -87,6 +88,50 @@ export const verifyUser = async (req, res, next) => {
     return res
       .status(200)
       .json({ success: true, message: "User verified successfully" });
+  } catch (error) {
+    return next(errorHandler(505, `Internal Server Error: ${error}`));
+  }
+};
+
+export const signin = async (req, res, next) => {
+  try {
+    const { userEmail, userPassword } = req.body;
+
+    console.log(userEmail);
+
+    //empty input validation
+    if (!userEmail || !userPassword) {
+      return next(errorHandler(404, "All fields are required!"));
+    }
+
+    // check for valid user
+    const validUser = await User.findOne({ user_email: userEmail });
+    if (!validUser) return next(errorHandler(404, "Invalid Credentials1!"));
+
+    // Check if email is verified
+    if (!validUser.user_emailVerified) {
+      return next(errorHandler(401, "Email not verified!"));
+    }
+
+    const validPassword = bcryptjs.compareSync(
+      userPassword,
+      validUser.user_password
+    );
+
+    if (!validPassword) return next(errorHandler(401, "Invalid Credentials!"));
+
+    const { user_password: pass, ...rest } = validUser._doc;
+
+    const token = jwt.sign(
+      {
+        id: validUser._id,
+      },
+      process.env.JWT
+    );
+
+    console.log(token);
+
+    res.cookie("aT", token, { httpOnly: true }).status(200).json(rest);
   } catch (error) {
     return next(errorHandler(505, `Internal Server Error: ${error}`));
   }

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const SignUp = () => {
   const [passwordError, setPasswordError] = useState("");
@@ -15,6 +16,7 @@ const SignUp = () => {
   // form submission
   const onSubmit = async (signUpDetails) => {
     try {
+      console.log(signUpDetails);
       const signUpResponse = await axios.post(
         "http://localhost:3000/api/auth/signup",
         signUpDetails
@@ -108,6 +110,10 @@ const SignUp = () => {
             Sign Up
           </button>
         </form>
+
+        <Link className="text-white" to="/sign-in">
+          Go to SignIn
+        </Link>
       </div>
     </>
   );
