@@ -5,11 +5,12 @@ import cookieParser from "cookie-parser";
 import morgan from "morgan";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
-import path from "path";
 import cors from "cors";
 
 //route imports
 import authRouter from "./routes/auth.route.js";
+import dashboardRouter from "./routes/dashboard.route.js";
+import { verifyToken } from "./utils/verifyToken.js";
 
 const app = express();
 const hostPort = process.env.PORT;
@@ -36,6 +37,7 @@ mongoose
 
 // routes
 app.use("/api/auth", authRouter);
+app.use("/api/dashboard", verifyToken, dashboardRouter);
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
