@@ -106,7 +106,7 @@ export const signin = async (req, res, next) => {
 
     // check for valid user
     const validUser = await User.findOne({ user_email: userEmail });
-    if (!validUser) return next(errorHandler(404, "Invalid Credentials1!"));
+    if (!validUser) return next(errorHandler(403, "Invalid Credentials1!"));
 
     // Check if email is verified
     if (!validUser.user_emailVerified) {
@@ -118,7 +118,7 @@ export const signin = async (req, res, next) => {
       validUser.user_password
     );
 
-    if (!validPassword) return next(errorHandler(401, "Invalid Credentials!"));
+    if (!validPassword) return next(errorHandler(403, "Invalid Credentials!"));
 
     const { user_password: pass, ...rest } = validUser._doc;
 
@@ -133,9 +133,22 @@ export const signin = async (req, res, next) => {
 
     res.cookie("aT", token, { httpOnly: true }).status(200).json({
       success: true,
-      data: rest,
+      userData: rest,
     });
   } catch (error) {
     return next(errorHandler(505, `Internal Server Error: ${error}`));
+  }
+};
+
+export const signout = async (req, res, next) => {
+  try {
+    res.clearCookie("aT");
+    res.status(200).json({
+      success: true,
+      message: "Signed Out Successfully!",
+    });
+  } catch (error) {
+    return next(errorHandler(404, `Error while signin out!`));
+    console.log(error);
   }
 };

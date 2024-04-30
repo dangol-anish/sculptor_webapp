@@ -1,7 +1,15 @@
 import React from "react";
+import SignOut from "../components/SignOut";
 
 const Dashboard = () => {
-  return <div>Dashboard</div>;
+  return (
+    <>
+      <h1>
+        Dashboard
+        <SignOut />
+      </h1>
+    </>
+  );
 };
 
 export default Dashboard;

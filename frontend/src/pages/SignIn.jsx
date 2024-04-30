@@ -2,6 +2,7 @@ import React from "react";
 import axios from "axios";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const SignIn = () => {
   const {
@@ -9,6 +10,8 @@ const SignIn = () => {
     formState: { errors },
     handleSubmit,
   } = useForm();
+
+  const navigate = useNavigate();
 
   // form submission
   const onSubmit = async (signUpDetails) => {
@@ -20,9 +23,9 @@ const SignIn = () => {
         { withCredentials: true }
       );
 
-      console.log(signUpResponse.data);
-
-      // console.log(data);
+      if (signUpResponse.data.success === true) {
+        navigate("/dashboard");
+      }
     } catch (error) {
       console.log(error.response.data);
     }
