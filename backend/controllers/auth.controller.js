@@ -152,3 +152,20 @@ export const signout = async (req, res, next) => {
     console.log(error);
   }
 };
+
+export const verifyUserToken = async (req, res, next) => {
+  try {
+    const token = req.cookies.aT;
+
+    if (token) {
+      res.json({
+        token,
+      });
+    } else {
+      res.json({
+        success: false,
+        message: "User is not loggeed in",
+      });
+    }
+  } catch (error) {}
+};

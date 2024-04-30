@@ -1,14 +1,14 @@
+// Dashboard.jsx
 import React from "react";
 import SignOut from "../components/SignOut";
 
 const Dashboard = () => {
   return (
-    <>
-      <h1>
-        Dashboard
-        <SignOut />
-      </h1>
-    </>
+    <div>
+      <h1>Welcome to the Dashboard</h1>
+      <p>This is the protected area of your application.</p>
+      <SignOut />
+    </div>
   );
 };
 

@@ -10,6 +10,7 @@ import cors from "cors";
 //route imports
 import authRouter from "./routes/auth.route.js";
 import dashboardRouter from "./routes/dashboard.route.js";
+import { verifyUserToken } from "./controllers/auth.controller.js";
 import { verifyToken } from "./utils/verifyToken.js";
 
 const app = express();
@@ -38,6 +39,7 @@ mongoose
 // routes
 app.use("/api/auth", authRouter);
 app.use("/api/dashboard", verifyToken, dashboardRouter);
+app.get("/verifyUserToken", verifyToken, verifyUserToken);
 
 app.use((err, req, res, next) => {
   const statusCode = err.statusCode || 500;
