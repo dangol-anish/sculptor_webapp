@@ -131,7 +131,10 @@ export const signin = async (req, res, next) => {
 
     console.log(token);
 
-    res.cookie("aT", token, { httpOnly: true }).status(200).json(rest);
+    res.cookie("aT", token, { httpOnly: true }).status(200).json({
+      success: true,
+      data: rest,
+    });
   } catch (error) {
     return next(errorHandler(505, `Internal Server Error: ${error}`));
   }

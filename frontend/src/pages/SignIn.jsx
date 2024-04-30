@@ -19,12 +19,12 @@ const SignIn = () => {
         signUpDetails,
         { withCredentials: true }
       );
-      // console.log(signUpDetails);
-      console.log(signUpResponse);
+
+      console.log(signUpResponse.data);
 
       // console.log(data);
     } catch (error) {
-      console.log(error);
+      console.log(error.response.data);
     }
   };
   return (
@@ -37,7 +37,6 @@ const SignIn = () => {
             <input
               type="email"
               {...register("userEmail", {
-                required: true,
                 pattern: /^\S+@\S+$/i,
               })}
             />
@@ -51,11 +50,7 @@ const SignIn = () => {
             <input
               type="password"
               autoComplete=""
-              {...register("userPassword", {
-                required: true,
-                pattern:
-                  /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/,
-              })}
+              {...register("userPassword", {})}
             />
             {errors.password && errors.password.type === "required" && (
               <span>Password is required</span>
