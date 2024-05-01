@@ -82,7 +82,7 @@ export const verifyUser = async (req, res, next) => {
         .json({ success: false, message: "Code is invalid" });
 
     user.user_emailVerified = true;
-    user.verificationCode = undefined; // Clear verification code after verification
+    user.verificationCode = undefined;
     await user.save();
 
     return res
@@ -168,4 +168,46 @@ export const verifyUserToken = async (req, res, next) => {
       });
     }
   } catch (error) {}
+};
+
+export const google = async (req, res, next) => {
+  try {
+    const { userEmail, userName, userAvatar } = req.body;
+
+    const user = await User.findOne({ user_email: userEmail });
+
+    if (user) {
+      const token = jwt.sign({ id: user._id }, process.env.JWT);
+      const { user_password: pass, ...rest } = user._doc;
+
+      res.cookie("aT", token, { httpOnly: true }).status(200).json({
+        success: true,
+        userData: rest,
+      });
+    } else {
+      const generatedPwd =
+        Math.random().toString(36).slice(-8) +
+        Math.random().toString(36).slice(-8);
+
+      const hashedPassword = bcryptjs.hashSync(generatedPwd, 10);
+      const newUser = new User({
+        user_name: userName,
+        user_email: userEmail,
+        user_password: hashedPassword,
+        user_avatar: userAvatar,
+        user_emailVerified: true,
+      });
+
+      await newUser.save();
+      const token = jwt.sign({ id: newUser._id }, process.env.JWT);
+      const { user_password: pass, ...rest } = newUser._doc;
+
+      res.cookie("aT", token, { httpOnly: true }).status(200).json({
+        success: true,
+        userData: rest,
+      });
+    }
+  } catch (error) {
+    next(errorHandler(404, "google sign in error"));
+  }
 };

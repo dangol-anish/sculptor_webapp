@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import axios from "axios";
 import { Link } from "react-router-dom";
+import OAuth from "../components/OAuth";
 
 const SignUp = () => {
   const [passwordError, setPasswordError] = useState("");
@@ -109,6 +110,7 @@ const SignUp = () => {
           <button className="text-white" type="submit">
             Sign Up
           </button>
+          <OAuth />
         </form>
 
         <Link className="text-white" to="/sign-in">

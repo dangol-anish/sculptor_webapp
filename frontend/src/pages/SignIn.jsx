@@ -3,6 +3,7 @@ import axios from "axios";
 import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import OAuth from "../components/OAuth";
 
 const SignIn = () => {
   const {
@@ -64,6 +65,7 @@ const SignIn = () => {
           <button className="text-white" type="submit">
             Sign In
           </button>
+          <OAuth />
         </form>
         <Link className="text-white" to="/sign-up">
           Go to Sign Up
